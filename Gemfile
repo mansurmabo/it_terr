@@ -15,6 +15,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'rspec-rails', '~> 3.7'
   gem 'database_cleaner'
+  gem 'ffaker'
 end
 
 group :development do
@@ -29,4 +30,3 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'oj'
 gem 'oj_mimic_json'
-gem 'sequel'
