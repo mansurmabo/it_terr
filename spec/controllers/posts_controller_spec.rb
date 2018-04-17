@@ -92,6 +92,33 @@ describe PostsController, type: :controller do
         expect(parsed_response[:errors]).to eq('Estimate not found')
       end
     end
+  end
+
+  describe "GET #ip_addresses" do
+    context 'with valid params' do
+      before do
+        @user_1 = User.create(login: 'admin@example.com')
+        @user_2 = User.create(login: 'admin2@example.com')
+        @user_3 = User.create(login: 'admin3@example.com')
+      end
+
+      before do
+        @post_1 = @user_1.posts.create(title: 'text', description: 'text1', ip_address: '1.1.1.1')
+        @post_2 = @user_2.posts.create(title: 'title2', description: 'text2', ip_address: '1.1.1.1')
+        @post_3 = @user_2.posts.create(title: 'title3', description: 'text3', ip_address: '1.1.2.2')
+        @post_4 = @user_2.posts.create(title: 'title4', description: 'text4', ip_address: '1.1.4.2')
+        @post_5 = @user_2.posts.create(title: 'title5', description: 'text5', ip_address: '1.1.4.2')
+      end
+
+
+      before { post :ip_adresses }
+
+      it 'successfully response' do
+        parsed_response = JSON.parse(response.body)
+        expect(response.status).to eq(200)
+        expect(parsed_response.count).to eq(2)
+      end
+    end
 
   end
 end

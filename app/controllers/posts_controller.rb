@@ -34,6 +34,13 @@ class PostsController < ApplicationController
     fail_response(e.message)
   end
 
+  def ip_addresses
+    #TODO: get users login in array, now select only posts where ip_address count > 1
+
+    posts = Post.select('ip_address').group(:ip_address).having("count(*) > 1").all
+    json_response(posts)
+  end
+
   private
 
   def posts_params(params)
