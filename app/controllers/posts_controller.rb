@@ -21,10 +21,17 @@ class PostsController < ApplicationController
   end
 
   def estimate
-    id = params[:id]
-    estimate = params[:estimate]
-    post = Post.find_by(id)
-    post.ratings.create(mark: estimate)
+    post_id = params[:id]
+    mark = params[:mark]
+    raise ArgumentError, 'Post id not found' if post_id.blank?
+    raise ArgumentError, 'Estimate not found' if mark.blank?
+
+    post = Post.find_by(id: post_id)
+    post.ratings.create(mark: mark)
+
+    json_response(post.average)
+  rescue ArgumentError => e
+    fail_response(e.message)
   end
 
   private
