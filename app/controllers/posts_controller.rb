@@ -1,9 +1,9 @@
 class PostsController < ApplicationController
-  TOP_NUMBER = 20
+  TOP_NUMBER = 10
 
   def index
     count = params[:number] ? params[:number] : TOP_NUMBER
-    posts = Post.includes(:ratings).order('ratings.mark DESC').take(count)
+    posts = Post.select('posts.id, posts.title, posts.description, avg(ratings.mark)').joins(:ratings).group('posts.id').order('avg(ratings.mark) desc').first(count)
 
     json_response(posts)
   end

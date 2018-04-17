@@ -31,16 +31,41 @@ describe PostsController, type: :controller do
   end
 
   describe "GET #index" do
-    let(:user) {create :user}
-    let!(:posts) { create_list :post, 10, user_id: user.id }
-    let!(:ratings) { create_list :rating, 100, post_id: Random.new.rand(1..10) }
+    context 'without number' do
+      let(:user) {create :user}
 
-    before { get :index }
+      before do
+        10.times do
+          user.posts.create(
+            title: FFaker::BaconIpsum.word,
+            description: FFaker::BaconIpsum.sentence,
+            ip_address: FFaker::Internet.ip_v4_address
+          )
+        end
+      end
 
-    it 'response' do
-      parsed_response = JSON.parse(response.body)
-      expect(parsed_response.count).to eq(posts.count)
+      before { user.posts.each { |p| 10.times { p.ratings.create(mark: Random.new.rand(1..5))} } }
+      before { get :index }
+
+      it 'response' do
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response.count).to eq(user.posts.count)
+      end
     end
+
+    context 'with number' do
+      let(:user) {create :user}
+      let!(:posts) { create_list :post, 10, user_id: user.id }
+      before { posts.each { |p| 10.times { p.ratings.create(mark: Random.new.rand(1..5))} } }
+
+      before { get :index, params: { number: 5 } }
+
+      it 'response' do
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response.count).to eq(5)
+      end
+    end
+
   end
 
   describe "POST #estimate" do
