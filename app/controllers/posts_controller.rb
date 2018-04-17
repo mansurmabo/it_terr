@@ -3,7 +3,11 @@ class PostsController < ApplicationController
 
   def index
     count = params[:number] ? params[:number] : TOP_NUMBER
-    posts = Post.select('posts.id, posts.title, posts.description, avg(ratings.mark)').joins(:ratings).group('posts.id').order('avg(ratings.mark) desc').first(count)
+    posts = Post.select('posts.id, posts.title, posts.description, avg(ratings.mark)')
+      .joins(:ratings)
+      .group('posts.id')
+      .order('avg(ratings.mark) desc')
+      .first(count)
 
     json_response(posts)
   end
@@ -25,9 +29,8 @@ class PostsController < ApplicationController
     mark = params[:mark]
     raise ArgumentError, 'Post id not found' if post_id.blank?
     raise ArgumentError, 'Estimate not found' if mark.blank?
-
     post = Post.find_by(id: post_id)
-    post.ratings.create(mark: mark)
+    post.ratings.create(mark: mark.to_i)
 
     json_response(post.average)
   rescue ArgumentError => e

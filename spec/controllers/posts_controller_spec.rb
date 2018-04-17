@@ -111,7 +111,7 @@ describe PostsController, type: :controller do
       end
 
 
-      before { post :ip_adresses }
+      before { post :ip_addresses }
 
       it 'successfully response' do
         parsed_response = JSON.parse(response.body)
